@@ -1,0 +1,201 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #FF2B3C;
+  --color-primary-dark: #D61B2B;
+  --color-dark: #0F1115;
+  --color-secondary: #171A21;
+  --color-custom-border: #252B36;
+  --color-muted-gray: #8F9CAE;
+  --color-card-hover: #1E232E;
+  --color-success: #10B981;
+  --color-sold: #EF4444;
+}
+
+:root {
+  --background: #0F1115;
+  --foreground: #FFFFFF;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-jakarta), system-ui, -apple-system, sans-serif;
+  overflow-x: hidden;
+}
+
+/* Base Custom Utilities */
+.glassmorphism {
+  background: rgba(23, 26, 33, 0.75);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(37, 43, 54, 0.8);
+}
+
+.glow-hover {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glow-hover:hover {
+  border-color: #FF2B3C;
+  box-shadow: 0 0 20px rgba(255, 43, 60, 0.15);
+  transform: translateY(-2px);
+}
+
+.neon-btn {
+  background: #FF2B3C;
+  color: #FFFFFF;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 10px rgba(255, 43, 60, 0.2);
+}
+
+.neon-btn:hover {
+  background: #D61B2B;
+  box-shadow: 0 0 20px rgba(255, 43, 60, 0.4);
+  transform: translateY(-1px);
+}
+
+/* Pulsing effect for CTA WhatsApp button */
+@keyframes pulse-red {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(255, 43, 60, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 10px rgba(255, 43, 60, 0);
+  }
+}
+
+.pulsing-btn {
+  animation: pulse-red 2s infinite;
+}
+
+/* Custom Hide Scrollbar Utility */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Scrollbar Customization */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #0F1115;
+}
+::-webkit-scrollbar-thumb {
+  background: #252B36;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #FF2B3C;
+}
+
+/* ==========================================================================
+   LIGHT MODE DESIGN SYSTEM OVERRIDES
+   ========================================================================== */
+html.light body {
+  background-color: #F8FAFC;
+  color: #0F172A;
+}
+
+html.light .bg-dark {
+  background-color: #FFFFFF !important;
+}
+
+html.light .bg-secondary,
+html.light .bg-secondary\/80 {
+  background-color: #F1F5F9 !important;
+}
+
+html.light .bg-secondary\/10 {
+  background-color: rgba(241, 245, 249, 0.2) !important;
+}
+
+html.light .bg-secondary\/20 {
+  background-color: rgba(241, 245, 249, 0.4) !important;
+}
+
+html.light .bg-secondary\/30 {
+  background-color: rgba(241, 245, 249, 0.6) !important;
+}
+
+html.light .bg-secondary\/40 {
+  background-color: rgba(241, 245, 249, 0.8) !important;
+}
+
+html.light .bg-secondary\/50 {
+  background-color: rgba(241, 245, 249, 0.9) !important;
+}
+
+html.light .border-custom-border,
+html.light .border-custom-border\/35 {
+  border-color: #E2E8F0 !important;
+}
+
+html.light .border-custom-border\/50 {
+  border-color: rgba(226, 232, 240, 0.5) !important;
+}
+
+html.light .border-custom-border\/80 {
+  border-color: rgba(226, 232, 240, 0.8) !important;
+}
+
+html.light .glassmorphism {
+  background: rgba(255, 255, 255, 0.8) !important;
+  backdrop-filter: blur(12px) !important;
+  border: 1px solid rgba(226, 232, 240, 0.9) !important;
+}
+
+html.light .text-white {
+  color: #0F172A !important;
+}
+
+html.light .text-muted-gray {
+  color: #475569 !important;
+}
+
+html.light input, 
+html.light select, 
+html.light textarea {
+  background-color: #FFFFFF !important;
+  color: #0F172A !important;
+  border-color: #CBD5E1 !important;
+}
+
+html.light input::placeholder, 
+html.light textarea::placeholder {
+  color: #94A3B8 !important;
+}
+
+/* Specific component overrides for light mode */
+html.light .shadow-xl {
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05) !important;
+}
+
+html.light .text-primary.bg-gradient-to-r {
+  background: none !important;
+  -webkit-background-clip: unset !important;
+  -webkit-text-fill-color: unset !important;
+  color: #FF2B3C !important;
+}
+
+html.light .bg-dark\/40 {
+  background-color: rgba(241, 245, 249, 0.5) !important;
+}
+
+html.light .bg-dark\/60 {
+  background-color: #FFFFFF !important;
+}
+
+html.light .border-dashed {
+  border-color: #CBD5E1 !important;
+}
+
+html.light .hero-blob-bg {
+  background: radial-gradient(ellipse_at_top,rgba(255,43,60,0.04),transparent_50%) !important;
+}
+
