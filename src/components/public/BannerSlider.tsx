@@ -104,7 +104,7 @@ export default function BannerSlider({ banners }: BannerSliderProps) {
       <img
         src={currentBanner.image_url}
         alt={currentBanner.title}
-        className="w-full h-full object-contain bg-secondary"
+        className="w-full h-full object-fill md:object-cover"
       />
       {/* Premium dark gradient overlay for text readability */}
       <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent z-10" />
