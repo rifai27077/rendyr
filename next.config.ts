@@ -17,19 +17,7 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: '*.supabase.co',
       },
-      {
-        protocol: 'https',
-        hostname: 'api.jbrendyr.com',
-      },
     ],
-  },
-  async rewrites() {
-    return [
-      {
-        source: '/api/proxy/:path*',
-        destination: 'https://api.jbrendyr.com/api/:path*',
-      },
-    ];
   },
 };
 
