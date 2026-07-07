@@ -26,6 +26,13 @@ function getMockStore(tableName: string): any[] {
   return [];
 }
 
+function sebelumSesudah() {
+  if (!isDummySupabase) {
+    set
+    getMockData('products', []);
+  }
+}
+
 function setMockStore(tableName: string, data: any[]) {
   if (isClient) {
     localStorage.setItem(`mock_db_${tableName}`, JSON.stringify(data));
@@ -68,83 +75,92 @@ function createMockQueryBuilder(tableName: string) {
     _isSingle: false,
     _isDelete: false,
     _updateValues: null,
+    _insertValues: null,
 
-    then(onfulfilled: any) {
-      let data: any = [];
+    async then(onfulfilled: any) {
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
+      let data: any = null;
+      let error: any = null;
 
-      // Load initial mock records
-      if (tableName === 'categories') {
-        data = getMockData('categories', [
-          { id: 'cat-ff', name: 'Free Fire', slug: 'free-fire', description: 'Akun Free Fire sultan, bundle langka, dan skin senjata maksimal.' },
-          { id: 'cat-ml', name: 'Mobile Legends', slug: 'mobile-legends', description: 'Koleksi akun Mobile Legends premium dan aman.' },
-        ]);
-      } else if (tableName === 'products') {
-        data = getMockData('products', [
-          {
-            id: 'ff-1',
-            name: 'Akun FF Sultan Evo Gun Max V1',
-            game_name: 'Free Fire',
-            slug: 'akun-ff-sultan-evo-gun-max-v1',
-            price: 1500000,
-            thumbnail: '/free-fire-logo.png',
-            gallery: ['/ff-ss-1.png', '/ff-ss-2.png'],
-            description: 'Akun Free Fire Sultan spesifikasi dewa. Memiliki Evo Gun skin terlengkap (AK-Blue Flame Draco Max, M1014-Green Flame Draco Max, MP40-Predatory Cobra Max). Bundle langka Cobra dan bundle Old Season lengkap. Akun login FB, aman 100% no minus.',
-            rank: 'Grandmaster',
-            skin: 'Evo Gun Max (AK, MP40, M1014)',
-            hero: 'Karakter Lengkap (Alok, Chrono max)',
-            status: 'ready',
-            created_at: new Date().toISOString(),
-            category_id: 'cat-ff',
-            views: 104,
-            whatsapp_clicks: 12
+      try {
+        if (this._insertValues) {
+          // INSERT
+          const body = Array.isArray(this._insertValues) ? this._insertValues[0] : this._insertValues;
+          const res = await fetch(`${baseUrl}/${tableName}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body)
+          });
+          if (!res.ok) throw new Error(`Insert failed: ${res.statusText}`);
+          data = await res.json();
+        } else if (this._isDelete) {
+          // DELETE
+          const res = await fetch(`${baseUrl}/${tableName}/${this._filterValue}`, {
+            method: 'DELETE'
+          });
+          if (!res.ok) throw new Error(`Delete failed: ${res.statusText}`);
+          data = await res.json();
+        } else if (this._updateValues) {
+          // UPDATE
+          if (tableName === 'settings') {
+            const res = await fetch(`${baseUrl}/settings`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ key: this._filterValue, value: this._updateValues.value })
+            });
+            if (!res.ok) throw new Error(`Update settings failed: ${res.statusText}`);
+            data = await res.json();
+          } else {
+            const res = await fetch(`${baseUrl}/${tableName}/${this._filterValue}`, {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(this._updateValues)
+            });
+            if (!res.ok) throw new Error(`Update failed: ${res.statusText}`);
+            data = await res.json();
           }
-        ]);
-      } else if (tableName === 'banners') {
-        data = getMockData('banners', [
-          { id: 'b-1', title: 'Test Banner Free Fire', image_url: '/free_fire_cover_1782248101427.png', link_url: '/catalog', order_num: 1, is_active: true },
-          { id: 'b-2', title: 'Rendy R JB Banner', image_url: '/banner-rendy.png', link_url: '/catalog', order_num: 2, is_active: true }
-        ]);
-      } else if (tableName === 'faqs') {
-        data = getMockData('faqs', [
-          { id: 'f-1', question: 'Apakah transaksi di sini aman?', answer: 'Sangat aman. Kami menggunakan rekening bersama internal dan memverifikasi data penjual sebelum diserahkan.', order_num: 1 },
-          { id: 'f-2', question: 'Bagaimana metode pembayarannya?', answer: 'Kami mendukung transfer bank lokal, e-wallet utama (Dana, OVO, GoPay), serta sistem QRIS otomatis.', order_num: 2 }
-        ]);
-      } else if (tableName === 'testimonials') {
-        data = getMockData('testimonials', [
-          { id: 't-1', name: 'RIZZXITERS SAJA', avatar_url: '', rating: 5, review: 'Beli akun FF di sini bener-bener rekomen banget! Proses cepat cuma 5 menit langsung dapet data login lengkap.', game_name: 'Free Fire', created_at: new Date().toISOString() }
-        ]);
-      } else if (tableName === 'settings') {
-        data = getMockData('settings', [
-          { key: 'whatsapp_number', value: '628123456789' },
-          { key: 'site_name', value: 'Rendy R JB' },
-          { key: 'site_title', value: 'Rendy R JB | Jual Beli Akun Game Premium & Terpercaya' },
-          { key: 'site_tagline', value: 'Marketplace Jual Beli Akun Game Aman dan Terpercaya' },
-          { key: 'site_description', value: 'Rendy R JB adalah tempat terpercaya untuk jual beli akun game Mobile Legends, Free Fire, Valorant dengan harga murah, proses cepat, dan jaminan keamanan 100%.' }
-        ]);
-      } else if (tableName === 'analytics_daily') {
-        data = getMockData('analytics_daily', [
-          { date: new Date().toISOString().split('T')[0], page_views: 120, whatsapp_clicks: 15 }
-        ]);
+        } else {
+          // SELECT
+          if (tableName === 'settings' && this._filterColumn === 'key') {
+            const res = await fetch(`${baseUrl}/settings/${this._filterValue}`);
+            if (res.status === 404) {
+              data = null;
+            } else {
+              data = await res.json();
+            }
+          } else if (this._filterColumn && (this._isSingle || this._filterColumn === 'slug' || this._filterColumn === 'id')) {
+            const res = await fetch(`${baseUrl}/${tableName}/${this._filterValue}`);
+            if (res.status === 404) {
+              data = null;
+            } else {
+              data = await res.json();
+            }
+          } else {
+            // Get all
+            let url = `${baseUrl}/${tableName}`;
+            if (tableName === 'analytics_daily') {
+              url = `${baseUrl}/analytics`;
+            }
+            const res = await fetch(url);
+            if (!res.ok) throw new Error(`Select all failed: ${res.statusText}`);
+            data = await res.json();
+          }
+        }
+      } catch (err: any) {
+        console.error(`Laravel API error for table ${tableName}:`, err);
+        error = err;
       }
 
-      // Apply key/column filters if any
-      if (this._filterColumn && this._filterValue !== undefined) {
-        data = data.filter((row: any) => {
-          return row[this._filterColumn] === this._filterValue || row.key === this._filterValue;
-        });
-      }
-
-      // Convert to single object resolver if requested (.single() or .maybeSingle())
       let resolvedData = data;
-      if (this._isSingle) {
+      if (this._isSingle && Array.isArray(data)) {
         resolvedData = data.length > 0 ? data[0] : null;
       }
 
-      return Promise.resolve(onfulfilled({ 
+      return onfulfilled({ 
         data: resolvedData, 
-        error: null, 
+        error: error ? { message: error.message } : null, 
         count: Array.isArray(resolvedData) ? resolvedData.length : (resolvedData ? 1 : 0) 
-      }));
+      });
     }
   };
 
@@ -153,45 +169,19 @@ function createMockQueryBuilder(tableName: string) {
   methods.forEach(method => {
     chain[method] = function(...args: any[]) {
       if (method === 'single' || method === 'maybeSingle') {
-        chain._isSingle = true;
+        this._isSingle = true;
       } else if (method === 'insert') {
-        const rows = args[0];
-        const tableData = getMockStore(tableName);
-        const newRows = (Array.isArray(rows) ? rows : [rows]).map(row => ({
-          id: row.id || 'mock-id-' + Math.random().toString(36).substring(2, 9),
-          created_at: new Date().toISOString(),
-          ...row
-        }));
-        tableData.push(...newRows);
-        setMockStore(tableName, tableData);
+        this._insertValues = args[0];
       } else if (method === 'update') {
-        chain._updateValues = args[0];
+        this._updateValues = args[0];
       } else if (method === 'delete') {
-        chain._isDelete = true;
+        this._isDelete = true;
       } else if (method === 'eq') {
         const [column, value] = args;
-        chain._filterColumn = column;
-        chain._filterValue = value;
-
-        // Apply mutations immediately if filters match
-        if (chain._updateValues) {
-          const tableData = getMockStore(tableName);
-          const updated = tableData.map((row: any) => {
-            if (row[column] === value || row.key === value) {
-              return { ...row, ...chain._updateValues };
-            }
-            return row;
-          });
-          setMockStore(tableName, updated);
-        } else if (chain._isDelete) {
-          const tableData = getMockStore(tableName);
-          const filtered = tableData.filter((row: any) => {
-            return row[column] !== value && row.key !== value;
-          });
-          setMockStore(tableName, filtered);
-        }
+        this._filterColumn = column;
+        this._filterValue = value;
       }
-      return chain;
+      return this;
     };
   });
 
@@ -204,27 +194,25 @@ const mockStorage = {
   from(bucketName: string) {
     return {
       async upload(filePath: string, file: File, options?: any) {
-        if (typeof window !== 'undefined') {
-          try {
-            const formData = new FormData();
-            formData.append('file', file);
-            formData.append('filePath', filePath);
+        let publicUrl = '/free-fire-logo.png';
+        try {
+          const formData = new FormData();
+          formData.append('file', file);
 
-            const res = await fetch('/api/mock-upload', {
-              method: 'POST',
-              body: formData
-            });
+          const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
+          const res = await fetch(`${baseUrl}/upload`, {
+            method: 'POST',
+            body: formData
+          });
 
-            if (!res.ok) throw new Error('Local upload failed');
-            const data = await res.json();
-            
-            // Store path to memory map
-            uploadedFilesMap.set(filePath, data.publicUrl);
-          } catch (e) {
-            console.error('Local mock upload failed:', e);
-          }
+          if (!res.ok) throw new Error('Laravel upload failed');
+          const data = await res.json();
+          
+          publicUrl = data.publicUrl;
+          uploadedFilesMap.set(filePath, publicUrl);
+        } catch (e) {
+          console.error('Laravel upload failed:', e);
         }
-        await new Promise(resolve => setTimeout(resolve, 200));
         return { data: { path: filePath }, error: null };
       },
       getPublicUrl(filePath: string) {
