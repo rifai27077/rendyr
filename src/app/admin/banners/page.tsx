@@ -6,7 +6,6 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { bannerSchema } from '@/lib/schema-validation';
 import { z } from 'zod';
-import Image from 'next/image';
 import { Plus, Edit2, Trash2, X, Loader2, Image as ImageIcon, ExternalLink, Link2, UploadCloud } from 'lucide-react';
 
 type BannerFormValues = z.infer<typeof bannerSchema>;
@@ -280,12 +279,10 @@ export default function AdminBannersPage() {
             >
               {/* Image box */}
               <div className="relative aspect-video w-full bg-dark">
-                <Image
+                <img
                   src={banner.image_url}
                   alt={banner.title}
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 768px) 100vw, 500px"
+                  className="w-full h-full object-cover"
                 />
                 
                 {/* Active check indicator */}
@@ -434,11 +431,10 @@ export default function AdminBannersPage() {
                 {/* Local preview window */}
                 {imagePreview && (
                   <div className="relative w-full aspect-video rounded-lg overflow-hidden border border-custom-border bg-dark mt-2">
-                    <Image
+                    <img
                       src={imagePreview}
                       alt="Pratinjau Banner"
-                      fill
-                      className="object-contain p-1"
+                      className="w-full h-full object-contain p-1"
                     />
                   </div>
                 )}

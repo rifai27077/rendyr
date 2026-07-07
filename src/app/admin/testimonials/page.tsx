@@ -6,7 +6,6 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { testimonialSchema } from '@/lib/schema-validation';
 import { z } from 'zod';
-import Image from 'next/image';
 import { Plus, Edit2, Trash2, X, Loader2, Star, MessageSquare, Link2, UploadCloud } from 'lucide-react';
 
 type TestimonialFormValues = z.infer<typeof testimonialSchema>;
@@ -272,7 +271,7 @@ export default function AdminTestimonialsPage() {
                 <div className="flex items-center space-x-3 min-w-0">
                   {t.avatar_url ? (
                     <div className="relative w-8 h-8 rounded-full overflow-hidden border border-primary/20 shrink-0">
-                      <Image src={t.avatar_url} alt={t.name} fill className="object-cover" />
+                      <img src={t.avatar_url} alt={t.name} className="w-full h-full object-cover" />
                     </div>
                   ) : (
                     <div className="w-8 h-8 rounded-full bg-primary/10 border border-primary/30 flex items-center justify-center text-primary font-bold text-xs shrink-0">

@@ -1,5 +1,4 @@
 import { Star, MessageSquareQuote } from 'lucide-react';
-import Image from 'next/image';
 
 interface Testimonial {
   id: string;
@@ -79,11 +78,10 @@ export default function TestimonialsGrid({ testimonials }: TestimonialsGridProps
           <div className="flex items-center space-x-4 border-t border-custom-border/40 pt-4 mt-auto">
             {item.avatar_url ? (
               <div className="relative w-10 h-10 rounded-full overflow-hidden border border-primary/20 shrink-0">
-                <Image
+                <img
                   src={item.avatar_url}
                   alt={item.name}
-                  fill
-                  className="object-cover"
+                  className="w-full h-full object-cover"
                 />
               </div>
             ) : (

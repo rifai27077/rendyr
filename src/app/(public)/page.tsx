@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import Image from 'next/image';
 import { supabase } from '@/lib/supabase';
 import { getSettings } from '@/lib/settings';
 import BannerSlider from '@/components/public/BannerSlider';
