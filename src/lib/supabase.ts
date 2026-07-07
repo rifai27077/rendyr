@@ -40,7 +40,10 @@ function createMockQueryBuilder(tableName: string) {
             },
             body: JSON.stringify(body)
           });
-          if (!res.ok) throw new Error(`Insert failed: ${res.statusText}`);
+          if (!res.ok) {
+            const errorData = await res.json().catch(() => ({ message: res.statusText }));
+            throw new Error(`Insert failed (${res.status}): ${JSON.stringify(errorData)}`);
+          }
           data = await res.json();
         } else if (this._isDelete) {
           // DELETE
@@ -48,7 +51,10 @@ function createMockQueryBuilder(tableName: string) {
             method: 'DELETE',
             headers: { 'Accept': 'application/json' }
           });
-          if (!res.ok) throw new Error(`Delete failed: ${res.statusText}`);
+          if (!res.ok) {
+            const errorData = await res.json().catch(() => ({ message: res.statusText }));
+            throw new Error(`Delete failed (${res.status}): ${JSON.stringify(errorData)}`);
+          }
           data = await res.json();
         } else if (this._updateValues) {
           // UPDATE
@@ -61,7 +67,10 @@ function createMockQueryBuilder(tableName: string) {
               },
               body: JSON.stringify({ key: this._filterValue, value: this._updateValues.value })
             });
-            if (!res.ok) throw new Error(`Update settings failed: ${res.statusText}`);
+            if (!res.ok) {
+              const errorData = await res.json().catch(() => ({ message: res.statusText }));
+              throw new Error(`Update settings failed (${res.status}): ${JSON.stringify(errorData)}`);
+            }
             data = await res.json();
           } else {
             const res = await fetch(`${baseUrl}/${tableName}/${this._filterValue}`, {
@@ -72,7 +81,10 @@ function createMockQueryBuilder(tableName: string) {
               },
               body: JSON.stringify(this._updateValues)
             });
-            if (!res.ok) throw new Error(`Update failed: ${res.statusText}`);
+            if (!res.ok) {
+              const errorData = await res.json().catch(() => ({ message: res.statusText }));
+              throw new Error(`Update failed (${res.status}): ${JSON.stringify(errorData)}`);
+            }
             data = await res.json();
           }
         } else {
