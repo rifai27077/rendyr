@@ -87,6 +87,22 @@ export default function CatalogClient({ initialProducts, categories }: CatalogCl
     updateUrl({ sort: val });
   };
 
+  const handlePriceDropdownChange = (val: string) => {
+    if (val === 'under_1m') {
+      handlePriceChange(0, 999999);
+    } else if (val === 'over_1m') {
+      handlePriceChange(1000000, 15000000);
+    } else {
+      handlePriceChange(0, 15000000);
+    }
+  };
+
+  const getPriceDropdownValue = () => {
+    if (minPrice === 0 && maxPrice === 999999) return 'under_1m';
+    if (minPrice === 1000000 && maxPrice === 15000000) return 'over_1m';
+    return 'all';
+  };
+
   const resetAllFilters = () => {
     setSearch('');
     setCategory('free-fire');
@@ -238,20 +254,15 @@ export default function CatalogClient({ initialProducts, categories }: CatalogCl
           <div className="space-y-2">
             <label className="text-xs font-bold text-white uppercase tracking-wider">Rentang Harga (IDR)</label>
             <div className="space-y-3">
-              <input
-                type="number"
-                placeholder="Min Rp"
-                value={minPrice || ''}
-                onChange={(e) => handlePriceChange(Number(e.target.value), maxPrice)}
-                className="w-full px-3 py-2 rounded-lg bg-dark/60 border border-custom-border text-white text-xs focus:outline-none focus:border-primary"
-              />
-              <input
-                type="number"
-                placeholder="Max Rp"
-                value={maxPrice || ''}
-                onChange={(e) => handlePriceChange(minPrice, Number(e.target.value))}
-                className="w-full px-3 py-2 rounded-lg bg-dark/60 border border-custom-border text-white text-xs focus:outline-none focus:border-primary"
-              />
+              <select
+                value={getPriceDropdownValue()}
+                onChange={(e) => handlePriceDropdownChange(e.target.value)}
+                className="w-full px-3 py-2 rounded-lg bg-dark/60 border border-custom-border text-white text-xs focus:outline-none focus:border-primary cursor-pointer"
+              >
+                <option value="all">Semua Harga</option>
+                <option value="under_1m">Di bawah Rp 1.000.000</option>
+                <option value="over_1m">Rp 1.000.000 ke atas</option>
+              </select>
             </div>
           </div>
         </aside>
@@ -409,20 +420,15 @@ export default function CatalogClient({ initialProducts, categories }: CatalogCl
               <div className="space-y-2">
                 <label className="text-[10px] font-bold text-white uppercase tracking-wider block">Rentang Harga (IDR)</label>
                 <div className="space-y-2">
-                  <input
-                    type="number"
-                    placeholder="Min Rp"
-                    value={minPrice || ''}
-                    onChange={(e) => handlePriceChange(Number(e.target.value), maxPrice)}
-                    className="w-full px-3 py-2 rounded-lg bg-secondary/50 border border-custom-border text-white text-xs focus:outline-none focus:border-primary"
-                  />
-                  <input
-                    type="number"
-                    placeholder="Max Rp"
-                    value={maxPrice || ''}
-                    onChange={(e) => handlePriceChange(minPrice, Number(e.target.value))}
-                    className="w-full px-3 py-2 rounded-lg bg-secondary/50 border border-custom-border text-white text-xs focus:outline-none focus:border-primary"
-                  />
+                  <select
+                    value={getPriceDropdownValue()}
+                    onChange={(e) => handlePriceDropdownChange(e.target.value)}
+                    className="w-full px-3 py-2 rounded-lg bg-secondary/50 border border-custom-border text-white text-xs focus:outline-none focus:border-primary cursor-pointer"
+                  >
+                    <option value="all">Semua Harga</option>
+                    <option value="under_1m">Di bawah Rp 1.000.000</option>
+                    <option value="over_1m">Rp 1.000.000 ke atas</option>
+                  </select>
                 </div>
               </div>
             </div>

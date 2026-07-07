@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabaseAdmin } from '@/lib/supabase';
+import { supabaseAdmin, isDummySupabase } from '@/lib/supabase';
 
 export async function POST(req: NextRequest) {
   try {
@@ -42,7 +42,7 @@ export async function POST(req: NextRequest) {
           prod_id: productId,
         });
 
-        if (prodError) {
+        if (prodError || isDummySupabase) {
           // Fallback
           const { data: currentProd } = await supabaseAdmin
             .from('products')

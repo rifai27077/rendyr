@@ -39,7 +39,7 @@ export default function ProductCard({ product }: ProductCardProps) {
           <span
             className={`text-[10px] font-extrabold tracking-wider uppercase px-2.5 py-1 rounded-md border ${
               isReady
-                ? 'bg-primary/10 text-primary border-primary/20'
+                ? 'bg-success/10 text-success border-success/20'
                 : 'bg-sold/10 text-sold border-sold/20'
             }`}
           >
