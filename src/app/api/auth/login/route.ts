@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
     const trimmedEmail = email.toLowerCase().trim();
 
     // Call Laravel Auth API
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'https://api.jbrendyr.com/api';
     const res = await fetch(`${baseUrl}/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
