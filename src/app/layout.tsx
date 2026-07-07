@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { Plus_Jakarta_Sans } from 'next/font/google';
 import './globals.css';
-import MockDbSync from '@/components/public/MockDbSync';
+
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ['latin'],
@@ -70,7 +70,6 @@ export default function RootLayout({
   return (
     <html lang="id" className="dark">
       <body className={`${plusJakartaSans.variable} antialiased min-h-screen bg-dark text-white`}>
-        <MockDbSync />
         {children}
       </body>
     </html>

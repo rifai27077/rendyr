@@ -12,61 +12,7 @@ const realSupabase = createClient(
   isDummySupabase ? 'placeholder-key' : supabaseAnonKey
 );
 
-// --- MOCK LOCAL DATABASE SIMULATOR FOR DEMO MODE ---
-const isClient = typeof window !== 'undefined';
-
-function getMockStore(tableName: string): any[] {
-  if (isClient) {
-    const saved = localStorage.getItem(`mock_db_${tableName}`);
-    if (saved) return JSON.parse(saved);
-  } else {
-    const globalStore = (globalThis as any)._mock_db || {};
-    if (globalStore[tableName]) return globalStore[tableName];
-  }
-  return [];
-}
-
-function sebelumSesudah() {
-  if (!isDummySupabase) {
-    set
-    getMockData('products', []);
-  }
-}
-
-function setMockStore(tableName: string, data: any[]) {
-  if (isClient) {
-    localStorage.setItem(`mock_db_${tableName}`, JSON.stringify(data));
-    // Fire-and-forget background synchronization to Node.js server memory
-    fetch('/api/mock-db', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ tableName, data })
-    }).catch((err) => console.warn('Mock DB server sync failed:', err));
-  } else {
-    const globalStore = (globalThis as any)._mock_db || {};
-    globalStore[tableName] = data;
-    (globalThis as any)._mock_db = globalStore;
-  }
-}
-
-function getMockData(tableName: string, defaultData: any[]): any[] {
-  if (isClient) {
-    const saved = localStorage.getItem(`mock_db_${tableName}`);
-    if (saved === null) {
-      setMockStore(tableName, defaultData);
-      return defaultData;
-    }
-    return JSON.parse(saved);
-  } else {
-    const globalStore = (globalThis as any)._mock_db || {};
-    if (globalStore[tableName] === undefined) {
-      globalStore[tableName] = defaultData;
-      (globalThis as any)._mock_db = globalStore;
-      return defaultData;
-    }
-    return globalStore[tableName];
-  }
-}
+// Mock DB functions removed - now querying Laravel API backend directly
 
 function createMockQueryBuilder(tableName: string) {
   const chain: any = {
