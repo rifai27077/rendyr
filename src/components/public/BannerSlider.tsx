@@ -33,7 +33,25 @@ export default function BannerSlider({ banners }: BannerSliderProps) {
   if (!banners || banners.length === 0) {
     // Return a default gaming banner placeholder if no banners exist in DB
     return (
-      <div className="relative w-full h-[220px] sm:h-[350px] md:h-[480px] bg-secondary rounded-2xl overflow-hidden border border-custom-border flex items-center justify-center">
+      <div
+        className="
+          relative
+          w-full
+          h-[200px]
+          sm:h-[260px]
+          md:h-[340px]
+          lg:h-[420px]
+          rounded-2xl
+          overflow-hidden
+          border
+          border-custom-border
+          bg-secondary
+          shadow-xl
+          flex
+          items-center
+          justify-center
+        "
+      >
         <div className="absolute inset-0 bg-gradient-to-r from-dark via-secondary/70 to-dark/50 z-10" />
         <div className="relative z-20 text-center px-4 max-w-2xl">
           <h2 className="text-xl sm:text-3xl md:text-5xl font-extrabold text-white mb-2 leading-tight">
@@ -86,45 +104,10 @@ export default function BannerSlider({ banners }: BannerSliderProps) {
       <img
         src={currentBanner.image_url}
         alt={currentBanner.title}
-        className="w-full h-full object-cover"
+        className="w-full h-full object-contain bg-secondary"
       />
       {/* Premium dark gradient overlay for text readability */}
-      <div className="absolute inset-0 bg-gradient-to-r from-dark via-dark/40 to-transparent z-10" />
-
-      {/* Floating text elements */}
-      <div className="absolute inset-y-0 left-0 z-20 flex flex-col justify-center px-6 sm:px-12 md:px-20 max-w-xl sm:max-w-2xl">
-        <motion.h2
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.2, duration: 0.5 }}
-          className="text-lg sm:text-3xl md:text-4xl font-extrabold text-white mb-2 leading-tight drop-shadow-md"
-        >
-          {currentBanner.title}
-        </motion.h2>
-        <motion.p
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.4, duration: 0.5 }}
-          className="text-xs sm:text-sm text-primary font-bold tracking-wider uppercase mb-4 sm:mb-6"
-        >
-          AKUN GAME PREMIUM PILIHAN TERBAIK
-        </motion.p>
-        
-        {currentBanner.link_url && (
-          <motion.div
-            initial={{ scale: 0.9, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ delay: 0.6, duration: 0.4 }}
-          >
-            <Link
-              href={currentBanner.link_url}
-              className="px-5 py-2 sm:px-6 sm:py-2.5 rounded-lg bg-primary hover:bg-primary-dark text-dark font-extrabold text-xs sm:text-sm transition-all duration-300 shadow-lg shadow-primary/20 active:scale-95 inline-block cursor-pointer"
-            >
-              Lihat Detail
-            </Link>
-          </motion.div>
-        )}
-      </div>
+      <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent z-10" />
     </div>
   );
 
@@ -163,7 +146,27 @@ export default function BannerSlider({ banners }: BannerSliderProps) {
               e.preventDefault();
               handlePrev();
             }}
-            className="absolute left-4 top-1/2 -translate-y-1/2 z-30 p-2 rounded-full bg-dark/60 hover:bg-primary hover:text-dark text-white border border-custom-border hover:border-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 active:scale-90"
+            className="
+            absolute
+            left-5
+            top-1/2
+            -translate-y-1/2
+            z-30
+            w-11
+            h-11
+            rounded-full
+            bg-black/40
+            backdrop-blur-md
+            flex
+            items-center
+            justify-center
+            text-white
+            hover:bg-primary
+            transition-all
+            duration-300
+            opacity-0
+            group-hover:opacity-100
+            "
             aria-label="Previous slide"
           >
             <ChevronLeft className="h-5 w-5" />
@@ -173,7 +176,27 @@ export default function BannerSlider({ banners }: BannerSliderProps) {
               e.preventDefault();
               handleNext();
             }}
-            className="absolute right-4 top-1/2 -translate-y-1/2 z-30 p-2 rounded-full bg-dark/60 hover:bg-primary hover:text-dark text-white border border-custom-border hover:border-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 active:scale-90"
+            className="
+          absolute
+          right-5
+          top-1/2
+          -translate-y-1/2
+          z-30
+          w-11
+          h-11
+          rounded-full
+          bg-black/40
+          backdrop-blur-md
+          flex
+          items-center
+          justify-center
+          text-white
+          hover:bg-primary
+          transition-all
+          duration-300
+          opacity-0
+          group-hover:opacity-100
+          "
             aria-label="Next slide"
           >
             <ChevronRight className="h-5 w-5" />
@@ -191,8 +214,10 @@ export default function BannerSlider({ banners }: BannerSliderProps) {
                 setDirection(index > currentIndex ? 1 : -1);
                 setCurrentIndex(index);
               }}
-              className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
-                index === currentIndex ? 'bg-primary w-6' : 'bg-white/40 hover:bg-white/60'
+              className={`h-2 rounded-full transition-all duration-300 ${
+                index === currentIndex
+                  ? 'w-8 bg-primary'
+                  : 'w-2 bg-white/40 hover:bg-white/70'
               }`}
               aria-label={`Go to slide ${index + 1}`}
             />

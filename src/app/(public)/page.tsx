@@ -121,46 +121,57 @@ export default async function HomePage() {
         <div className="hero-blob-bg absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(255,43,60,0.08),transparent_50%)] z-0 pointer-events-none" />
         <div className="absolute -top-[20%] -left-[10%] w-[40vw] h-[40vw] rounded-full bg-primary/5 blur-[120px] pointer-events-none" />
         
-        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center relative z-10">
-          {/* Hero Content Left */}
-          <div className="lg:col-span-7 flex flex-col space-y-6 text-center lg:text-left">
-            <div className="inline-flex items-center space-x-2 bg-primary/10 border border-primary/20 rounded-full px-4 py-1.5 w-max mx-auto lg:mx-0">
-              <Star className="h-4 w-4 text-primary fill-primary animate-pulse" />
+        <div className="max-w-7xl mx-auto relative z-10">
+
+          {/* Banner Full Width */}
+          <BannerSlider banners={banners} />
+
+          {/* Content */}
+          <div className="mt-10 flex flex-col items-center text-center">
+
+            <div className="inline-flex items-center space-x-2 bg-primary/10 border border-primary/20 rounded-full px-4 py-1.5">
+              <Star className="h-4 w-4 text-primary fill-primary" />
               <span className="text-[10px] sm:text-xs text-primary font-bold uppercase tracking-wider">
-                Spesialis Akun Free Fire Sultan & Game Premium
+                Spesialis Akun Sultan & Game Premium
               </span>
             </div>
-            
-            <h1 className="text-3xl sm:text-5xl md:text-6xl font-extrabold text-white leading-[1.1] tracking-tight">
-              Miliki Akun <span className="text-primary bg-gradient-to-r from-primary to-white bg-clip-text text-transparent">Free Fire</span> Sultan Impianmu
+
+            <h1 className="mt-6 text-4xl md:text-6xl font-black text-white leading-tight">
+              Miliki Akun{" "}
+              <span className="text-primary">
+                Game
+              </span>{" "}
+              Sultan
             </h1>
-            
-            <p className="text-sm sm:text-base text-muted-gray leading-relaxed max-w-xl mx-auto lg:mx-0">
+
+            <p className="mt-5 text-sm md:text-base text-muted-gray max-w-2xl">
               {settings.site_description}
             </p>
 
-            {/* Quick search input */}
-            <form action="/catalog" method="GET" className="max-w-lg w-full mx-auto lg:mx-0 relative mt-2 group">
+            <form
+              action="/catalog"
+              method="GET"
+              className="mt-8 w-full max-w-xl relative group"
+            >
               <input
                 type="text"
                 name="q"
-                placeholder="Cari game, skin, rank, hero, dll..."
-                className="w-full pl-12 pr-28 py-3.5 sm:py-4 rounded-xl bg-secondary/80 border border-custom-border text-white text-sm focus:outline-none focus:border-primary transition-all duration-300 shadow-xl"
+                placeholder="Cari akun impian..."
+                className="w-full pl-12 pr-32 py-4 rounded-xl bg-secondary border border-custom-border text-white focus:border-primary outline-none"
               />
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-gray group-focus-within:text-primary transition-colors" />
+
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-gray" />
+
               <button
                 type="submit"
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 px-4 py-2 sm:px-5 sm:py-2.5 rounded-lg bg-primary hover:bg-primary-dark text-white font-extrabold text-xs transition-colors cursor-pointer"
+                className="absolute right-2 top-2 bottom-2 px-6 rounded-lg bg-primary text-white font-bold hover:bg-primary-dark transition"
               >
-                Cari Akun
+                Cari
               </button>
             </form>
+
           </div>
 
-          {/* Hero Graphics / Slider Right */}
-          <div className="lg:col-span-5 w-full">
-            <BannerSlider banners={banners} />
-          </div>
         </div>
       </section>
 
