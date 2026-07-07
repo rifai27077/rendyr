@@ -34,7 +34,10 @@ function createMockQueryBuilder(tableName: string) {
           const body = Array.isArray(this._insertValues) ? this._insertValues[0] : this._insertValues;
           const res = await fetch(`${baseUrl}/${tableName}`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 
+              'Content-Type': 'application/json',
+              'Accept': 'application/json' 
+            },
             body: JSON.stringify(body)
           });
           if (!res.ok) throw new Error(`Insert failed: ${res.statusText}`);
@@ -42,7 +45,8 @@ function createMockQueryBuilder(tableName: string) {
         } else if (this._isDelete) {
           // DELETE
           const res = await fetch(`${baseUrl}/${tableName}/${this._filterValue}`, {
-            method: 'DELETE'
+            method: 'DELETE',
+            headers: { 'Accept': 'application/json' }
           });
           if (!res.ok) throw new Error(`Delete failed: ${res.statusText}`);
           data = await res.json();
@@ -51,7 +55,10 @@ function createMockQueryBuilder(tableName: string) {
           if (tableName === 'settings') {
             const res = await fetch(`${baseUrl}/settings`, {
               method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
+              headers: { 
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+              },
               body: JSON.stringify({ key: this._filterValue, value: this._updateValues.value })
             });
             if (!res.ok) throw new Error(`Update settings failed: ${res.statusText}`);
@@ -59,7 +66,10 @@ function createMockQueryBuilder(tableName: string) {
           } else {
             const res = await fetch(`${baseUrl}/${tableName}/${this._filterValue}`, {
               method: 'PUT',
-              headers: { 'Content-Type': 'application/json' },
+              headers: { 
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+              },
               body: JSON.stringify(this._updateValues)
             });
             if (!res.ok) throw new Error(`Update failed: ${res.statusText}`);
