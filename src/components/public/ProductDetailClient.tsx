@@ -79,10 +79,10 @@ export default function ProductDetailClient({ product, settings, relatedProducts
             {/* Status tag */}
             <div className="absolute top-4 left-4 z-10">
               <span
-                className={`text-xs font-extrabold tracking-wider uppercase px-3 py-1.5 rounded-lg border ${
+                className={`text-xs font-black tracking-widest uppercase px-4 py-2 rounded-lg shadow-xl ${
                   isReady
-                    ? 'bg-primary/20 text-primary border-primary/30'
-                    : 'bg-sold/20 text-sold border-sold/30'
+                    ? 'bg-success text-white shadow-success/30'
+                    : 'bg-sold text-white shadow-sold/30'
                 }`}
               >
                 {isReady ? 'Tersedia' : 'Terjual'}

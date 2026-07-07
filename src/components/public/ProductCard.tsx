@@ -37,10 +37,10 @@ export default function ProductCard({ product }: ProductCardProps) {
         {/* Status Badge */}
         <div className="absolute top-3 left-3 z-10">
           <span
-            className={`text-[10px] font-extrabold tracking-wider uppercase px-2.5 py-1 rounded-md border ${
+            className={`text-[10px] font-black tracking-widest uppercase px-3 py-1.5 rounded-md shadow-lg ${
               isReady
-                ? 'bg-success/10 text-success border-success/20'
-                : 'bg-sold/10 text-sold border-sold/20'
+                ? 'bg-success text-white shadow-success/30'
+                : 'bg-sold text-white shadow-sold/30'
             }`}
           >
             {isReady ? 'Tersedia' : 'Terjual'}
