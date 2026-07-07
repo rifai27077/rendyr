@@ -28,6 +28,10 @@ export default function AdminLayout({
   const router = useRouter();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
+  if (pathname === '/admin/login') {
+    return <>{children}</>;
+  }
+
   const menuItems = [
     { name: 'Overview', href: '/admin/dashboard', icon: LayoutDashboard },
     { name: 'Kelola Produk', href: '/admin/products', icon: ShoppingBag },
