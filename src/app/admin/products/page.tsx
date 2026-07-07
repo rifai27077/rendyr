@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import { supabase } from '@/lib/supabase';
 import { Plus, Edit2, Trash2, Search, Loader2, ShoppingBag, Eye, Phone, CheckCircle, XCircle, AlertTriangle } from 'lucide-react';
 import { formatPrice } from '@/lib/utils';
@@ -176,12 +175,11 @@ export default function AdminProductsPage() {
                       {/* Photo Thumbnail */}
                       <td className="py-4 px-6">
                         <div className="relative w-12 aspect-video rounded overflow-hidden border border-custom-border bg-dark shrink-0">
-                          <Image
+                          {/* Use regular img for external URLs from backend API */}
+                          <img
                             src={prod.thumbnail}
                             alt={prod.name}
-                            fill
-                            className="object-cover"
-                            sizes="60px"
+                            className="w-full h-full object-cover"
                           />
                         </div>
                       </td>

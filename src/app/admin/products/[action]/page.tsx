@@ -23,7 +23,6 @@ import {
   Award,
   Link2,
 } from 'lucide-react';
-import Image from 'next/image';
 
 type ProductFormValues = z.infer<typeof productSchema>;
 
@@ -438,7 +437,8 @@ export default function AdminProductFormPage() {
 
                 {thumbnailPreview && (
                   <div className="relative w-full aspect-video rounded-xl overflow-hidden border border-custom-border bg-dark mt-2">
-                    <Image src={thumbnailPreview} alt="Pratinjau Sampul" fill className="object-contain p-1" />
+                    {/* Use regular img instead of Image component */}
+                    <img src={thumbnailPreview} alt="Pratinjau Sampul" className="w-full h-full object-contain p-1" />
                   </div>
                 )}
               </div>
@@ -469,7 +469,8 @@ export default function AdminProductFormPage() {
                       {/* Already uploaded existing gallery items */}
                       {existingGallery.map((url, index) => (
                         <div key={`exist-${index}`} className="relative aspect-video rounded border border-custom-border overflow-hidden bg-dark group">
-                          <Image src={url} alt="Galeri" fill className="object-cover" />
+                          {/* Use regular img instead of Image component */}
+                          <img src={url} alt="Galeri" className="w-full h-full object-cover" />
                           <button
                             type="button"
                             onClick={() => handleRemoveExistingGallery(url)}
@@ -483,7 +484,8 @@ export default function AdminProductFormPage() {
                       {/* Selected local files gallery items */}
                       {galleryPreviews.map((preview, index) => (
                         <div key={`local-${index}`} className="relative aspect-video rounded border border-primary/40 overflow-hidden bg-dark group">
-                          <Image src={preview} alt="Galeri" fill className="object-cover" />
+                          {/* Use regular img instead of Image component */}
+                          <img src={preview} alt="Galeri" className="w-full h-full object-cover" />
                           <button
                             type="button"
                             onClick={() => handleRemoveLocalGallery(index)}

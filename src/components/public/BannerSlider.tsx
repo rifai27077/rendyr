@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Image from 'next/image';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
@@ -83,14 +82,11 @@ export default function BannerSlider({ banners }: BannerSliderProps) {
 
   const BannerContent = () => (
     <div className="relative w-full h-full">
-      {/* Banner image with optimization */}
-      <Image
+      {/* Banner image - use regular img for external URLs from backend API */}
+      <img
         src={currentBanner.image_url}
         alt={currentBanner.title}
-        fill
-        priority
-        className="object-cover"
-        sizes="(max-width: 1200px) 100vw, 1200px"
+        className="w-full h-full object-cover"
       />
       {/* Premium dark gradient overlay for text readability */}
       <div className="absolute inset-0 bg-gradient-to-r from-dark via-dark/40 to-transparent z-10" />

@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Image from 'next/image';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ShieldCheck, MessageSquare, Share2, Sparkles, Sword, Award, ArrowLeft, Send } from 'lucide-react';
@@ -99,13 +98,11 @@ export default function ProductDetailClient({ product, settings, relatedProducts
                 transition={{ duration: 0.25 }}
                 className="relative w-full h-full"
               >
-                <Image
+                {/* Use regular img for external URLs from backend API */}
+                <img
                   src={images[activeImageIndex]}
                   alt={`${product.name} - View ${activeImageIndex + 1}`}
-                  fill
-                  priority
-                  className="object-contain p-2"
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 800px"
+                  className="w-full h-full object-contain p-2"
                 />
               </motion.div>
             </AnimatePresence>
@@ -124,12 +121,11 @@ export default function ProductDetailClient({ product, settings, relatedProducts
                       : 'border-custom-border/60 hover:border-primary/50'
                   }`}
                 >
-                  <Image
+                  {/* Use regular img for external URLs from backend API */}
+                  <img
                     src={img}
                     alt={`Thumbnail ${index + 1}`}
-                    fill
-                    className="object-cover"
-                    sizes="100px"
+                    className="w-full h-full object-cover"
                   />
                 </button>
               ))}

@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import Image from 'next/image';
 import { ShieldCheck, Eye, Sparkles, User, Sword } from 'lucide-react';
 import { formatPrice } from '@/lib/utils';
 
@@ -55,12 +54,11 @@ export default function ProductCard({ product }: ProductCardProps) {
           </span>
         </div>
 
-        <Image
+        {/* Use regular img for external URLs from backend API */}
+        <img
           src={product.thumbnail}
           alt={product.name}
-          fill
-          className="object-cover group-hover:scale-105 transition-transform duration-500"
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
         />
         
         {/* Hover overlay detail button */}
