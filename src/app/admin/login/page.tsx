@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, Suspense } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { loginSchema } from '@/lib/schema-validation';
@@ -10,13 +10,19 @@ import { ShieldCheck, Eye, EyeOff, Loader2, KeyRound, Mail } from 'lucide-react'
 
 type LoginFormValues = z.infer<typeof loginSchema>;
 
-function LoginForm() {
+export default function AdminLoginPage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isGoingBack, setIsGoingBack] = useState(false);
+  const [redirectTo, setRedirectTo] = useState('/admin/dashboard');
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const redirectedFrom = params.get('redirectedFrom');
+    if (redirectedFrom) setRedirectTo(redirectedFrom);
+  }, []);
 
   const {
     register,
@@ -49,8 +55,7 @@ function LoginForm() {
         throw new Error(data.error || 'Terjadi kesalahan saat masuk');
       }
 
-      const redirectedFrom = searchParams.get('redirectedFrom') || '/admin/dashboard';
-      router.push(redirectedFrom);
+      router.push(redirectTo);
       router.refresh();
     } catch (err: any) {
       setError(err.message || 'Gagal tersambung ke server');
@@ -168,18 +173,3 @@ function LoginForm() {
     </main>
   );
 }
-
-export default function AdminLoginPage() {
-  return (
-    <Suspense fallback={
-      <div className="min-h-screen bg-dark flex flex-col justify-center items-center text-primary text-xs">
-        <Loader2 className="h-8 w-8 animate-spin text-primary mb-2" />
-        <span>Memuat panel login...</span>
-      </div>
-    }>
-      <LoginForm />
-    </Suspense>
-  );
-}
-
-import Link from 'next/link';
