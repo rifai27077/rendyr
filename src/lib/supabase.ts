@@ -24,7 +24,9 @@ function createMockQueryBuilder(tableName: string) {
     _insertValues: null,
 
     async then(onfulfilled: any) {
-      const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'https://api.jbrendyr.com/api';
+      const baseUrl = typeof window !== 'undefined'
+        ? '/api/proxy'
+        : (process.env.LARAVEL_API_URL || 'https://api.jbrendyr.com/api');
       let data: any = null;
       let error: any = null;
 
@@ -145,7 +147,7 @@ const mockStorage = {
           const formData = new FormData();
           formData.append('file', file);
 
-          const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'https://api.jbrendyr.com/api';
+          const baseUrl = '/api/proxy';
           const res = await fetch(`${baseUrl}/upload`, {
             method: 'POST',
             body: formData
