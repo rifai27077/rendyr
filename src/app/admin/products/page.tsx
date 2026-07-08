@@ -51,17 +51,17 @@ export default function AdminProductsPage() {
       const from = (page - 1) * pageSize;
       const to = from + pageSize - 1;
 
-      let query = supabase
+      let dbQuery = supabase
         .from('products')
         .select('id, name, game_name, price, thumbnail, status, rank, views, whatsapp_clicks', { count: 'exact' });
 
       if (debouncedSearchQuery) {
-        query = query.or(`name.ilike.%${debouncedSearchQuery}%,game_name.ilike.%${debouncedSearchQuery}%`);
+        dbQuery = dbQuery.or(`name.ilike.%${debouncedSearchQuery}%,game_name.ilike.%${debouncedSearchQuery}%`);
       }
 
-      const { data, error, count } = await query
-        .range(from, to)
-        .order('created_at', { ascending: false });
+      dbQuery = dbQuery.order('created_at', { ascending: false });
+      
+      const { data, error, count } = await dbQuery.range(from, to);
 
       if (error) throw error;
       setProducts(data || []);

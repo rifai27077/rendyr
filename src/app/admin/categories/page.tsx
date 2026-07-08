@@ -72,17 +72,17 @@ export default function AdminCategoriesPage() {
       const from = (page - 1) * pageSize;
       const to = from + pageSize - 1;
 
-      let query = supabase
+      let dbQuery = supabase
         .from('categories')
         .select('*', { count: 'exact' });
 
       if (debouncedSearchQuery) {
-        query = query.ilike('name', `%${debouncedSearchQuery}%`);
+        dbQuery = dbQuery.ilike('name', `%${debouncedSearchQuery}%`);
       }
 
-      const { data, error, count } = await query
-        .range(from, to)
-        .order('name', { ascending: true });
+      dbQuery = dbQuery.order('name', { ascending: true });
+      
+      const { data, error, count } = await dbQuery.range(from, to);
 
       if (error) throw error;
       setCategories(data || []);
