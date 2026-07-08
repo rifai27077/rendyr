@@ -172,9 +172,51 @@ export default function AdminProductsPage() {
       {/* Products table grid */}
       <div className="bg-secondary/20 border border-custom-border rounded-2xl overflow-hidden">
         {isLoading ? (
-          <div className="py-20 flex flex-col items-center justify-center text-muted-gray gap-2">
-            <Loader2 className="h-8 w-8 text-primary animate-spin" />
-            <span className="text-xs">Memuat katalog akun...</span>
+          <div className="w-full">
+            <div className="w-full border-b border-custom-border/60 p-6 flex text-muted-gray font-bold text-xs">
+              <div className="w-20">Foto</div>
+              <div className="flex-1">Nama Akun</div>
+              <div className="flex-1">Game / Rank</div>
+              <div className="flex-1">Harga</div>
+              <div className="w-28 text-center">Status</div>
+              <div className="w-28 text-center">Aksi</div>
+            </div>
+            <div className="animate-pulse divide-y divide-custom-border/30">
+              {[...Array(5)].map((_, i) => (
+                <div key={i} className="flex items-center p-6 gap-6">
+                  {/* Foto */}
+                  <div className="w-12 aspect-video bg-secondary/80 rounded border border-custom-border shrink-0"></div>
+                  {/* Nama Akun */}
+                  <div className="flex-1 space-y-2">
+                    <div className="h-4 bg-secondary/80 rounded w-3/4"></div>
+                    <div className="h-3 bg-secondary/80 rounded w-1/2"></div>
+                  </div>
+                  {/* Game / Rank */}
+                  <div className="flex-1 space-y-2">
+                    <div className="h-4 bg-secondary/80 rounded w-1/2"></div>
+                    <div className="h-3 bg-secondary/80 rounded w-1/3"></div>
+                  </div>
+                  {/* Harga */}
+                  <div className="flex-1">
+                    <div className="h-4 bg-secondary/80 rounded w-2/3"></div>
+                  </div>
+                  {/* Views/Clicks */}
+                  <div className="w-20 space-y-2">
+                    <div className="h-3 bg-secondary/80 rounded w-full"></div>
+                    <div className="h-3 bg-secondary/80 rounded w-full"></div>
+                  </div>
+                  {/* Status */}
+                  <div className="w-28 flex justify-center">
+                    <div className="w-20 h-6 bg-secondary/80 rounded-md"></div>
+                  </div>
+                  {/* Aksi */}
+                  <div className="w-28 flex justify-center gap-2">
+                    <div className="w-8 h-8 bg-secondary/80 rounded-lg"></div>
+                    <div className="w-8 h-8 bg-secondary/80 rounded-lg"></div>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         ) : filteredProducts.length > 0 ? (
           <div className="overflow-x-auto w-full">

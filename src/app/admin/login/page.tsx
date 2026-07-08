@@ -69,12 +69,12 @@ export default function AdminLoginPage() {
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[120px] pointer-events-none z-0" />
 
       <div className="w-full max-w-md bg-secondary/65 border border-custom-border p-8 rounded-2xl shadow-2xl relative z-10 backdrop-blur-md">
-        <div className="text-center mb-8">
-          <div className="inline-flex bg-primary/10 p-3 rounded-2xl border border-primary/25 mb-4">
-            <ShieldCheck className="h-8 w-8 text-primary" />
+        <div className="flex flex-col items-center justify-center text-center mb-8">
+          <div className="relative w-20 h-20 mb-4 rounded-full overflow-hidden border-2 border-custom-border bg-dark shadow-xl">
+            <img src="/logo.png" alt="JBRENDYR Logo" className="w-full h-full object-cover" />
           </div>
           <h1 className="text-2xl font-extrabold text-white tracking-tight">
-            Console Administrator
+            Login Sistem
           </h1>
           <p className="text-xs text-muted-gray mt-1.5 uppercase font-bold tracking-widest">
             JBRENDYR.COM
