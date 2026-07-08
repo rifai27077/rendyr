@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShieldCheck, MessageSquare, Share2, Sparkles, Sword, Award, ArrowLeft, Send } from 'lucide-react';
+import { ShieldCheck, MessageSquare, Share2, Sparkles, Sword, Award, ArrowLeft, Send, X, ZoomIn } from 'lucide-react';
 import { formatPrice, cleanWhatsAppNumber, trackAnalytics } from '@/lib/utils';
 import { SiteSettings } from '@/lib/settings';
 import ProductCard, { Product } from '@/components/public/ProductCard';
@@ -27,6 +27,7 @@ export default function ProductDetailClient({ product, settings, relatedProducts
     : [product.thumbnail].filter(Boolean);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [isCopied, setIsCopied] = useState(false);
+  const [isZoomed, setIsZoomed] = useState(false);
 
   // Send page view analytics tracker on mount
   useEffect(() => {
@@ -75,7 +76,7 @@ export default function ProductDetailClient({ product, settings, relatedProducts
         
         {/* LEFT COLUMN: HIGH-RES SCREENSHOT GALLERY (5 Cols) */}
         <div className="lg:col-span-6 space-y-4">
-          <div className="relative w-full aspect-video bg-secondary rounded-2xl overflow-hidden border border-custom-border shadow-xl">
+          <div className="relative w-full h-[400px] sm:h-[500px] lg:h-[600px] bg-secondary rounded-2xl overflow-y-auto border border-custom-border shadow-xl custom-scrollbar group">
             {/* Status tag */}
             <div className="absolute top-4 left-4 z-10">
               <span
@@ -98,12 +99,19 @@ export default function ProductDetailClient({ product, settings, relatedProducts
                 transition={{ duration: 0.25 }}
                 className="relative w-full h-full"
               >
-                {/* Use regular img for external URLs from backend API */}
-                <img
-                  src={images[activeImageIndex]}
-                  alt={`${product.name} - View ${activeImageIndex + 1}`}
-                  className="w-full h-full object-contain p-2"
-                />
+                <div className="relative w-full h-auto group cursor-zoom-in" onClick={() => setIsZoomed(true)}>
+                  <img
+                    src={images[activeImageIndex]}
+                    alt={`${product.name} - View ${activeImageIndex + 1}`}
+                    className="w-full h-auto object-top pointer-events-none"
+                  />
+                  {/* Zoom Overlay on Hover */}
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 flex items-center justify-center transition-all duration-300">
+                    <div className="opacity-0 group-hover:opacity-100 bg-dark/60 backdrop-blur-md p-3 rounded-full text-white transform scale-90 group-hover:scale-100 transition-all duration-300">
+                      <ZoomIn className="h-6 w-6" />
+                    </div>
+                  </div>
+                </div>
               </motion.div>
             </AnimatePresence>
           </div>
@@ -252,6 +260,37 @@ export default function ProductDetailClient({ product, settings, relatedProducts
           </div>
         </div>
       )}
+
+      {/* ZOOM MODAL */}
+      <AnimatePresence>
+        {isZoomed && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 p-4 sm:p-8 cursor-zoom-out backdrop-blur-sm"
+            onClick={() => setIsZoomed(false)}
+          >
+            <div className="relative w-full max-w-5xl h-full flex flex-col items-center justify-center">
+              <button 
+                onClick={() => setIsZoomed(false)}
+                className="absolute top-0 right-0 z-[110] bg-dark/50 hover:bg-primary text-white p-3 rounded-full backdrop-blur-md transition-all border border-white/10 shadow-2xl"
+              >
+                <X className="h-6 w-6" />
+              </button>
+              
+              <div className="w-full h-full overflow-y-auto custom-scrollbar flex justify-center rounded-xl bg-dark/20 border border-white/5">
+                <img
+                  src={images[activeImageIndex]}
+                  alt="Zoomed product"
+                  className="w-full max-w-3xl h-auto object-top shadow-2xl"
+                  onClick={(e) => e.stopPropagation()} // prevent closing when scrolling or clicking image
+                />
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
