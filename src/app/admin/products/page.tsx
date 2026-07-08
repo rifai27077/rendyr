@@ -60,8 +60,8 @@ export default function AdminProductsPage() {
       }
 
       const { data, error, count } = await query
-        .order('created_at', { ascending: false })
-        .range(from, to);
+        .range(from, to)
+        .order('created_at', { ascending: false });
 
       if (error) throw error;
       setProducts(data || []);

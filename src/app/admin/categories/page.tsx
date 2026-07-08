@@ -81,8 +81,8 @@ export default function AdminCategoriesPage() {
       }
 
       const { data, error, count } = await query
-        .order('name', { ascending: true })
-        .range(from, to);
+        .range(from, to)
+        .order('name', { ascending: true });
 
       if (error) throw error;
       setCategories(data || []);
