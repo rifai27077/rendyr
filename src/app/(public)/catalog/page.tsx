@@ -6,7 +6,7 @@ import { Metadata } from 'next';
 import { Suspense } from 'react';
 import { Loader2 } from 'lucide-react';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 60; // ISR cache every 60 seconds
 
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getSettings();

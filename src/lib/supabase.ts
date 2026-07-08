@@ -23,6 +23,8 @@ function createMockQueryBuilder(tableName: string) {
     _updateValues: null,
     _insertValues: null,
     _range: null,
+    _limit: null,
+    _searchQuery: null,
 
     async then(onfulfilled: any) {
       const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'https://api.jbrendyr.com/api';
@@ -110,6 +112,21 @@ function createMockQueryBuilder(tableName: string) {
             if (tableName === 'analytics_daily') {
               url = `${baseUrl}/analytics`;
             }
+
+            const params = new URLSearchParams();
+            if (this._range) {
+              params.append('offset', this._range[0]);
+              params.append('limit', this._range[1] - this._range[0] + 1);
+            } else if (this._limit) {
+              params.append('limit', this._limit);
+            }
+            if (this._searchQuery) {
+              params.append('search', this._searchQuery);
+            }
+            
+            const qs = params.toString();
+            if (qs) url += `?${qs}`;
+
             const res = await fetch(url);
             if (!res.ok) throw new Error(`Select all failed: ${res.statusText}`);
             data = await res.json();
@@ -121,13 +138,19 @@ function createMockQueryBuilder(tableName: string) {
       }
 
       let resolvedData = data;
-      let totalCount = Array.isArray(data) ? data.length : (data ? 1 : 0);
+      let totalCount = 0;
 
-      if (this._isSingle && Array.isArray(data)) {
-        resolvedData = data.length > 0 ? data[0] : null;
-      } else if (this._range && Array.isArray(resolvedData)) {
-        const [from, to] = this._range;
-        resolvedData = resolvedData.slice(from, to + 1);
+      if (data && typeof data === 'object' && !Array.isArray(data) && 'data' in data) {
+        resolvedData = data.data;
+        totalCount = data.total || 0;
+      } else if (Array.isArray(data)) {
+        totalCount = data.length;
+      } else if (data) {
+        totalCount = 1;
+      }
+
+      if (this._isSingle && Array.isArray(resolvedData)) {
+        resolvedData = resolvedData.length > 0 ? resolvedData[0] : null;
       }
 
       return onfulfilled({ 
@@ -156,6 +179,14 @@ function createMockQueryBuilder(tableName: string) {
         this._filterValue = value;
       } else if (method === 'range') {
         this._range = args;
+      } else if (method === 'limit') {
+        this._limit = args[0];
+      } else if (method === 'or') {
+        const orStr = args[0] as string;
+        if (orStr && orStr.includes('ilike.%')) {
+          const match = orStr.match(/ilike\.%([^%]+)%/);
+          if (match) this._searchQuery = match[1];
+        }
       }
       return this;
     };
