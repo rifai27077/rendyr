@@ -1,5 +1,6 @@
 import { supabase } from '@/lib/supabase';
 import AnalyticsChart from '@/components/admin/AnalyticsChart';
+import DashboardProductsTable from '@/components/admin/DashboardProductsTable';
 import Link from 'next/link';
 import { ShoppingBag, Eye, Phone, Image as ImageIcon, MessageSquare, Star, ArrowUpRight, TrendingUp } from 'lucide-react';
 import { formatPrice } from '@/lib/utils';
@@ -16,21 +17,19 @@ async function getDashboardStats() {
       bannersCountRes,
       testimonialsCountRes,
       analyticsSumRes,
-      analyticsDailyRes,
-      topProductsRes
+      analyticsDailyRes
     ] = await Promise.all([
       supabase.from('products').select('*', { count: 'exact', head: true }),
       supabase.from('products').select('*', { count: 'exact', head: true }).eq('status', 'ready'),
       supabase.from('products').select('*', { count: 'exact', head: true }).eq('status', 'sold_out'),
       supabase.from('banners').select('*', { count: 'exact', head: true }),
       supabase.from('testimonials').select('*', { count: 'exact', head: true }),
-      supabase.from('analytics_daily').select('page_views, whatsapp_clicks'),
-      supabase.from('analytics_daily').select('*').order('date', { ascending: false }).limit(7),
-      supabase.from('products').select('id, name, game_name, price, status, views, whatsapp_clicks').order('views', { ascending: false }).limit(5)
+      supabase.from('products').select('views, whatsapp_clicks'),
+      supabase.from('analytics_daily').select('*').order('date', { ascending: false }).limit(7)
     ]);
 
     // Calculate aggregated totals
-    const totalViews = (analyticsSumRes.data || []).reduce((sum, row) => sum + (row.page_views || 0), 0);
+    const totalViews = (analyticsSumRes.data || []).reduce((sum, row) => sum + (row.views || 0), 0);
     const totalClicks = (analyticsSumRes.data || []).reduce((sum, row) => sum + (row.whatsapp_clicks || 0), 0);
 
     return {
@@ -42,7 +41,6 @@ async function getDashboardStats() {
       totalViews,
       totalClicks,
       dailyAnalytics: analyticsDailyRes.data || [],
-      topProducts: topProductsRes.data || [],
     };
   } catch (error) {
     console.error('Error fetching dashboard stats:', error);
@@ -55,7 +53,6 @@ async function getDashboardStats() {
       totalViews: 0,
       totalClicks: 0,
       dailyAnalytics: [],
-      topProducts: [],
     };
   }
 }
@@ -194,56 +191,7 @@ export default async function AdminDashboardPage() {
       </div>
 
       {/* 3. TOP POPULAR PRODUCTS TABLE */}
-      <div className="bg-secondary/20 border border-custom-border p-6 rounded-2xl space-y-5">
-        <h3 className="font-extrabold text-sm sm:text-base text-white tracking-wide uppercase border-l-3 border-primary pl-3">
-          5 Akun Paling Populer (Kunjungan Terbanyak)
-        </h3>
-
-        {stats.topProducts.length > 0 ? (
-          <div className="overflow-x-auto w-full">
-            <table className="w-full text-left text-xs border-collapse">
-              <thead>
-                <tr className="border-b border-custom-border/60 text-muted-gray font-bold">
-                  <th className="py-3 px-4">Nama Akun</th>
-                  <th className="py-3 px-4">Game</th>
-                  <th className="py-3 px-4">Harga</th>
-                  <th className="py-3 px-4">Status</th>
-                  <th className="py-3 px-4 text-center">Views</th>
-                  <th className="py-3 px-4 text-center">WA Clicks</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-custom-border/30">
-                {stats.topProducts.map((prod) => (
-                  <tr key={prod.id} className="hover:bg-dark/30 transition-colors">
-                    <td className="py-3.5 px-4 font-bold text-white max-w-[220px] truncate">
-                      {prod.name}
-                    </td>
-                    <td className="py-3.5 px-4 font-semibold text-muted-gray">{prod.game_name}</td>
-                    <td className="py-3.5 px-4 font-extrabold text-primary">{formatPrice(prod.price)}</td>
-                    <td className="py-3.5 px-4">
-                      <span
-                        className={`text-[9px] font-extrabold tracking-wide uppercase px-2 py-0.5 rounded border ${
-                          prod.status === 'ready'
-                            ? 'bg-primary/10 text-primary border-primary/20'
-                            : 'bg-sold/10 text-sold border-sold/20'
-                        }`}
-                      >
-                        {prod.status === 'ready' ? 'Tersedia' : 'Terjual'}
-                      </span>
-                    </td>
-                    <td className="py-3.5 px-4 text-center font-bold text-white">{prod.views || 0}</td>
-                    <td className="py-3.5 px-4 text-center font-bold text-white">{prod.whatsapp_clicks || 0}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        ) : (
-          <div className="text-center py-6 text-xs text-muted-gray">
-            Belum ada data kunjungan produk.
-          </div>
-        )}
-      </div>
+      <DashboardProductsTable />
     </div>
   );
 }
