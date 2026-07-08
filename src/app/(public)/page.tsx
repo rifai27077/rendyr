@@ -8,7 +8,7 @@ import FAQAccordion from '@/components/public/FAQAccordion';
 import WelcomePopup from '@/components/public/WelcomePopup';
 import { ShieldCheck, Search, Zap, Clock, Star, Award, Info, CheckCircle } from 'lucide-react';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 60; // Cache the page for 60 seconds (ISR)
 
 import { DEFAULT_CATEGORIES, DEFAULT_PRODUCTS } from '@/lib/default-products';
 
