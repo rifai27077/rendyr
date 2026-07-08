@@ -6,8 +6,9 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { categorySchema } from '@/lib/schema-validation';
 import { z } from 'zod';
-import { Plus, Edit2, Trash2, X, Loader2, RefreshCw, Grid } from 'lucide-react';
+import { Plus, Edit2, Trash2, X, Loader2, RefreshCw, Grid, Search } from 'lucide-react';
 import { generateSlug } from '@/lib/utils';
+import Pagination from '@/components/admin/Pagination';
 
 type CategoryFormValues = z.infer<typeof categorySchema>;
 
@@ -21,6 +22,11 @@ interface Category {
 export default function AdminCategoriesPage() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('');
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [totalCount, setTotalCount] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
@@ -50,17 +56,37 @@ export default function AdminCategoriesPage() {
     }
   }, [watchedName, editingCategory, setValue]);
 
+  // Debounce search query
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery);
+      setPage(1);
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
   // Load categories on load
   const loadCategories = async () => {
     setIsLoading(true);
     try {
-      const { data, error } = await supabase
+      const from = (page - 1) * pageSize;
+      const to = from + pageSize - 1;
+
+      let query = supabase
         .from('categories')
-        .select('*')
-        .order('name', { ascending: true });
+        .select('*', { count: 'exact' });
+
+      if (debouncedSearchQuery) {
+        query = query.ilike('name', `%${debouncedSearchQuery}%`);
+      }
+
+      const { data, error, count } = await query
+        .order('name', { ascending: true })
+        .range(from, to);
 
       if (error) throw error;
       setCategories(data || []);
+      setTotalCount(count || 0);
     } catch (err: any) {
       console.error('Failed to load categories:', err);
       alert('Gagal memuat kategori game');
@@ -71,7 +97,7 @@ export default function AdminCategoriesPage() {
 
   useEffect(() => {
     loadCategories();
-  }, []);
+  }, [page, pageSize, debouncedSearchQuery]);
 
   const openAddModal = () => {
     setEditingCategory(null);
@@ -173,6 +199,24 @@ export default function AdminCategoriesPage() {
         </button>
       </div>
 
+      {/* Control bar */}
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-secondary/10 border border-custom-border/50 p-4 rounded-2xl">
+        <div className="relative w-full sm:max-w-md">
+          <input
+            type="text"
+            placeholder="Cari nama kategori..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full pl-10 pr-4 py-2 rounded-lg bg-dark/60 border border-custom-border text-white text-xs focus:outline-none focus:border-primary"
+          />
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-gray" />
+        </div>
+
+        <div className="text-xs text-muted-gray font-semibold shrink-0">
+          Total: <span className="text-primary font-bold">{totalCount}</span> kategori
+        </div>
+      </div>
+
       {/* Categories table */}
       <div className="bg-secondary/20 border border-custom-border rounded-2xl overflow-hidden">
         {isLoading ? (
@@ -233,6 +277,16 @@ export default function AdminCategoriesPage() {
               Buat kategori pertama sekarang
             </button>
           </div>
+        )}
+
+        {totalCount > 0 && !isLoading && (
+          <Pagination
+            currentPage={page}
+            pageSize={pageSize}
+            totalCount={totalCount}
+            onPageChange={setPage}
+            onPageSizeChange={setPageSize}
+          />
         )}
       </div>
 

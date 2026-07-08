@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
 import { Plus, Edit2, Trash2, Search, Loader2, ShoppingBag, Eye, Phone, CheckCircle, XCircle, AlertTriangle } from 'lucide-react';
 import { formatPrice } from '@/lib/utils';
+import Pagination from '@/components/admin/Pagination';
 
 interface Product {
   id: string;
@@ -22,23 +23,49 @@ export default function AdminProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('');
   
+  // Pagination states
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [totalCount, setTotalCount] = useState(0);
+
   // Custom delete modal states
   const [productToDelete, setProductToDelete] = useState<{ id: string; name: string } | null>(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
+  // Debounce search query
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery);
+      setPage(1); // Reset to page 1 on new search
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
   // Load products list
   const loadProducts = async () => {
     setIsLoading(true);
     try {
-      const { data, error } = await supabase
+      const from = (page - 1) * pageSize;
+      const to = from + pageSize - 1;
+
+      let query = supabase
         .from('products')
-        .select('id, name, game_name, price, thumbnail, status, rank, views, whatsapp_clicks')
-        .order('created_at', { ascending: false });
+        .select('id, name, game_name, price, thumbnail, status, rank, views, whatsapp_clicks', { count: 'exact' });
+
+      if (debouncedSearchQuery) {
+        query = query.or(`name.ilike.%${debouncedSearchQuery}%,game_name.ilike.%${debouncedSearchQuery}%`);
+      }
+
+      const { data, error, count } = await query
+        .order('created_at', { ascending: false })
+        .range(from, to);
 
       if (error) throw error;
       setProducts(data || []);
+      setTotalCount(count || 0);
     } catch (err: any) {
       console.error('Failed to load products:', err);
       alert('Gagal memuat katalog produk');
@@ -49,7 +76,7 @@ export default function AdminProductsPage() {
 
   useEffect(() => {
     loadProducts();
-  }, []);
+  }, [page, pageSize, debouncedSearchQuery]);
 
   // Quick toggle inventory status
   const handleToggleStatus = async (id: string, currentStatus: 'ready' | 'sold_out') => {
@@ -95,17 +122,8 @@ export default function AdminProductsPage() {
     }
   };
 
-  // Client-side text filter calculations
-  const filteredProducts = products.filter((p) => {
-    const q = searchQuery.toLowerCase().trim();
-    return (
-      q === '' ||
-      p.name.toLowerCase().includes(q) ||
-      p.game_name.toLowerCase().includes(q) ||
-      (p.rank && p.rank.toLowerCase().includes(q)) ||
-      p.status.toLowerCase().includes(q)
-    );
-  });
+  // No longer needed because we do server-side filtering
+  const filteredProducts = products;
 
   return (
     <div className="space-y-8">
@@ -142,7 +160,7 @@ export default function AdminProductsPage() {
         </div>
 
         <div className="text-xs text-muted-gray font-semibold shrink-0">
-          Total: <span className="text-primary font-bold">{filteredProducts.length}</span> akun game
+          Total: <span className="text-primary font-bold">{totalCount}</span> akun game
         </div>
       </div>
 
@@ -280,6 +298,16 @@ export default function AdminProductsPage() {
               Tambah produk akun pertama sekarang
             </Link>
           </div>
+        )}
+
+        {totalCount > 0 && !isLoading && (
+          <Pagination
+            currentPage={page}
+            pageSize={pageSize}
+            totalCount={totalCount}
+            onPageChange={setPage}
+            onPageSizeChange={setPageSize}
+          />
         )}
       </div>
 

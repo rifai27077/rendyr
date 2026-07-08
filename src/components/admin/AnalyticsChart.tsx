@@ -65,6 +65,10 @@ export default function AnalyticsChart({ data }: AnalyticsChartProps) {
         position: 'top' as const,
         labels: {
           color: '#8F9CAE',
+          usePointStyle: true,
+          pointStyle: 'circle',
+          boxWidth: 8,
+          boxHeight: 8,
           font: {
             family: 'system-ui',
             weight: 'bold' as const,
