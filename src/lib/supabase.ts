@@ -22,6 +22,7 @@ function createMockQueryBuilder(tableName: string) {
     _isDelete: false,
     _updateValues: null,
     _insertValues: null,
+    _range: null,
 
     async then(onfulfilled: any) {
       const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'https://api.jbrendyr.com/api';
@@ -120,19 +121,24 @@ function createMockQueryBuilder(tableName: string) {
       }
 
       let resolvedData = data;
+      let totalCount = Array.isArray(data) ? data.length : (data ? 1 : 0);
+
       if (this._isSingle && Array.isArray(data)) {
         resolvedData = data.length > 0 ? data[0] : null;
+      } else if (this._range && Array.isArray(resolvedData)) {
+        const [from, to] = this._range;
+        resolvedData = resolvedData.slice(from, to + 1);
       }
 
       return onfulfilled({ 
         data: resolvedData, 
         error: error ? { message: error.message } : null, 
-        count: Array.isArray(resolvedData) ? resolvedData.length : (resolvedData ? 1 : 0) 
+        count: totalCount 
       });
     }
   };
 
-  const methods = ['select', 'insert', 'update', 'delete', 'order', 'limit', 'eq', 'neq', 'gt', 'lt', 'like', 'ilike', 'or', 'and', 'single', 'maybeSingle', 'csv'];
+  const methods = ['select', 'insert', 'update', 'delete', 'order', 'limit', 'range', 'eq', 'neq', 'gt', 'lt', 'like', 'ilike', 'or', 'and', 'single', 'maybeSingle', 'csv'];
   
   methods.forEach(method => {
     chain[method] = function(...args: any[]) {
@@ -148,6 +154,8 @@ function createMockQueryBuilder(tableName: string) {
         const [column, value] = args;
         this._filterColumn = column;
         this._filterValue = value;
+      } else if (method === 'range') {
+        this._range = args;
       }
       return this;
     };
