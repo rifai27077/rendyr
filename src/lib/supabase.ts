@@ -123,6 +123,9 @@ function createMockQueryBuilder(tableName: string) {
             if (this._searchQuery) {
               params.append('search', this._searchQuery);
             }
+            if (this._filterColumn && !this._isSingle && this._filterColumn !== 'slug' && this._filterColumn !== 'id') {
+              params.append(this._filterColumn, this._filterValue);
+            }
             
             const qs = params.toString();
             if (qs) url += `?${qs}`;
