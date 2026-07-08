@@ -147,7 +147,34 @@ function createMockQueryBuilder(tableName: string) {
         resolvedData = data.data;
         totalCount = data.total || 0;
       } else if (Array.isArray(data)) {
-        totalCount = data.length;
+        // Fallback local filtering for endpoints that haven't implemented backend search
+        if (this._filterColumn && this._filterValue && typeof this._filterValue === 'string' && !this._isSingle) {
+          const cleanSearch = this._filterValue.replace(/%/g, '').toLowerCase();
+          if (cleanSearch) {
+            resolvedData = data.filter((item: any) => 
+              item[this._filterColumn] && 
+              String(item[this._filterColumn]).toLowerCase().includes(cleanSearch)
+            );
+          }
+        } else if (this._searchQuery) {
+          // Fallback local search for .or()
+          const cleanSearch = this._searchQuery.toLowerCase();
+          resolvedData = data.filter((item: any) => 
+            Object.values(item).some(val => 
+              val && String(val).toLowerCase().includes(cleanSearch)
+            )
+          );
+        }
+
+        totalCount = resolvedData.length;
+
+        // Fallback local pagination for endpoints that haven't implemented backend pagination
+        if (this._range) {
+          const [from, to] = this._range;
+          resolvedData = resolvedData.slice(from, to + 1);
+        } else if (this._limit) {
+          resolvedData = resolvedData.slice(0, this._limit);
+        }
       } else if (data) {
         totalCount = 1;
       }
@@ -176,6 +203,10 @@ function createMockQueryBuilder(tableName: string) {
         this._updateValues = args[0];
       } else if (method === 'delete') {
         this._isDelete = true;
+      } else if (method === 'ilike' || method === 'like') {
+        const [column, value] = args;
+        this._filterColumn = column;
+        this._filterValue = value;
       } else if (method === 'eq') {
         const [column, value] = args;
         this._filterColumn = column;
